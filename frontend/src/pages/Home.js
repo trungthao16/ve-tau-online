@@ -18,26 +18,83 @@ function Home() {
     setTo(temp);
   };
 
+  // const handleSearch = () => {
+  //   const params = {
+  //     from,
+  //     to,
+  //     date,
+  //     passengers,
+  //     tripType,
+  //   };
+
+  //   if (tripType === "roundtrip") {
+  //     params.returnDate = returnDate;
+  //   }
+
+  //   if (tripType === "group") {
+  //     params.groupSize = groupSize;
+  //   }
+
+  //   const query = new URLSearchParams(params).toString();
+  //   navigate(`/trains?${query}`);
+  // };
+
   const handleSearch = () => {
-    const params = {
-      from,
-      to,
-      date,
-      passengers,
-      tripType,
-    };
+  if (!from.trim() || !to.trim()) {
+    alert("Vui lòng nhập ga đi và ga đến");
+    return;
+  }
 
-    if (tripType === "roundtrip") {
-      params.returnDate = returnDate;
+  if (from.trim().toLowerCase() === to.trim().toLowerCase()) {
+    alert("Ga đi và ga đến không được trùng nhau");
+    return;
+  }
+
+  if (!date) {
+    alert("Vui lòng chọn ngày đi");
+    return;
+  }
+
+  if (tripType === "roundtrip") {
+    if (!returnDate) {
+      alert("Vui lòng chọn ngày về");
+      return;
     }
 
-    if (tripType === "group") {
-      params.groupSize = groupSize;
+    if (new Date(returnDate) < new Date(date)) {
+      alert("Ngày về phải lớn hơn hoặc bằng ngày đi");
+      return;
     }
+  }
 
-    const query = new URLSearchParams(params).toString();
-    navigate(`/trains?${query}`);
+  if (tripType === "group") {
+    if (!groupSize.trim()) {
+      alert("Vui lòng nhập số lượng đoàn");
+      return;
+    }
+  }
+
+  const params = {
+    from,
+    to,
+    date,
+    passengers,
+    tripType,
   };
+
+  if (tripType === "roundtrip") {
+    params.returnDate = returnDate;
+  }
+
+  if (tripType === "group") {
+    params.groupSize = groupSize;
+  }
+
+  const query = new URLSearchParams(params).toString();
+
+  // đổi đúng route trang danh sách tàu của bạn
+  navigate(`/trains?${query}`);
+};
 
   const popularRoutes = [
     {

@@ -156,3 +156,50 @@ exports.deleteTrain = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.searchTrains = async (req, res) => {
+  try {
+    const { from = "", to = "", date = "", tripType = "", groupSize = "" } = req.query;
+
+    let trains = await Train.find();
+
+    if (from) {
+      trains = trains.filter((train) =>
+        train.from?.toLowerCase().includes(from.toLowerCase())
+      );
+    }
+
+    if (to) {
+      trains = trains.filter((train) =>
+        train.to?.toLowerCase().includes(to.toLowerCase())
+      );
+    }
+
+    if (date) {
+      trains = trains.filter((train) => {
+        if (!train.departureDate) return false;
+
+        const trainDate = new Date(train.departureDate)
+          .toISOString()
+          .split("T")[0];
+
+        return trainDate === date;
+      });
+    }
+
+    if (tripType === "group" && groupSize) {
+      const groupNumber = parseInt(groupSize, 10);
+
+      if (!isNaN(groupNumber)) {
+        trains = trains.filter((train) => {
+          const totalSeats = train.totalSeats || train.seats || 0;
+          return totalSeats >= groupNumber;
+        });
+      }
+    }
+
+    res.json(trains);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
