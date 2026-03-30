@@ -1,30 +1,32 @@
 
 
-// const express = require("express");
-// const router = express.Router();
-// const { getStats } = require("../controllers/adminController");
-// const { protect, admin } = require("../middleware/authMiddleware");
 
-// router.get("/stats", protect, admin, getStats);
+// import React from "react";
+// import { Navigate } from "react-router-dom";
 
-// module.exports = router;
+// const AdminRoute = ({ children }) => {
+//   const token = localStorage.getItem("token");
+//   const user = JSON.parse(localStorage.getItem("user") || "null");
 
-import React from "react";
-import { Navigate } from "react-router-dom";
+//   if (!token) {
+//     return <Navigate to="/login" replace />;
+//   }
 
-const AdminRoute = ({ children }) => {
-  const token = localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+//   if (!user || user.role !== "admin") {
+//     return <Navigate to="/" replace />;
+//   }
 
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
+//   return children;
+// };
 
-  if (!user || user.role !== "admin") {
-    return <Navigate to="/" replace />;
-  }
+// export default AdminRoute;
 
-  return children;
-};
+const express = require('express'); // Đổi từ import sang require
+const router = express.Router();
 
-export default AdminRoute;
+// Các route của bạn ở đây...
+router.get('/', (req, res) => {
+    res.json({ message: "Admin API working" });
+});
+
+module.exports = router; // Đổi từ export default sang module.exports
