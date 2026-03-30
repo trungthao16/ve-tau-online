@@ -70,11 +70,11 @@ function Navbar() {
                 </NavLink>
               )}
 
-              {user?.role === "admin" && (
+              {/* {user?.role === "admin" && (
                 <NavLink to="/admin" className="rv-login-btn rv-admin-back-btn">
                   Vào admin
                 </NavLink>
-              )}
+              )} */}
 
               <div className="rv-user-menu-wrap" ref={menuRef}>
                 <button
