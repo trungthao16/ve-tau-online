@@ -2733,3 +2733,499 @@ button{
     flex-wrap: wrap;
   }
 }
+
+/* =========================
+   GLOBAL BACKGROUND FIX
+========================= */
+body {
+  background:
+    #f3efe5,
+    radial-gradient(circle at 1px 1px, rgba(0,0,0,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+
+/* =========================
+   FINAL OVERRIDES - GIỮ STYLE CŨ
+   chỉ sửa:
+   1) nền body có pattern nhẹ
+   2) user box đẹp trên navbar tối
+   3) admin navbar căn giống user navbar
+========================= */
+
+/* 1. BODY BACKGROUND */
+body{
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background:
+    #f3efe5,
+    radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 28px 28px;
+  color: #1b120d;
+}
+
+/* 2. USER NAVBAR - giữ style tối */
+.rv-navbar{
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(90deg, rgba(24, 11, 5, 0.97), rgba(52, 16, 7, 0.97));
+  border-bottom: 1px solid rgba(214, 164, 55, 0.14);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.rv-navbar-inner{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 88px;
+  gap: 20px;
+}
+
+.rv-brand{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "Playfair Display", serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #d6a437;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.rv-brand-icon{
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #c63b2d, #df694f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 8px 18px rgba(198, 59, 45, 0.28);
+}
+
+.rv-menu{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.rv-menu a{
+  color: #f4e5d1;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  padding: 11px 16px;
+  border-radius: 14px;
+  transition: all 0.25s ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.rv-menu a:hover{
+  background: rgba(255, 184, 77, 0.1);
+  color: #ffd166;
+}
+
+.rv-menu a.active{
+  background: linear-gradient(135deg, #f7a521, #ffcb57);
+  color: #2b1308 !important;
+  font-weight: 800;
+  box-shadow: 0 8px 18px rgba(247, 165, 33, 0.24);
+}
+
+.rv-menu a.active::after{
+  display: none;
+}
+
+.rv-navbar-actions{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.rv-login-btn{
+  border: none;
+  background: #d14734;
+  color: #fff;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(209, 71, 52, 0.22);
+}
+
+.rv-login-btn:hover{
+  transform: translateY(-1px);
+  background: #c43d2b;
+}
+
+.ghost-btn{
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: none;
+}
+
+.ghost-btn:hover{
+  background: rgba(255,255,255,0.08);
+}
+
+.rv-admin-back-btn{
+  background: #d14734;
+  color: #fff;
+}
+
+.rv-admin-back-btn:hover{
+  background: #c43d2b;
+}
+
+/* 3. USER BOX ĐẸP NHƯ ẢNH */
+.rv-user-menu-wrap{
+  position: relative;
+}
+
+.rv-user-box{
+  min-width: 250px;
+  max-width: 280px;
+  min-height: 54px;
+  padding: 8px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 184, 77, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.rv-user-box:hover{
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.rv-user-avatar{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffd166, #f7a521);
+  color: #2b1308;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.rv-user-info{
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+  text-align: left;
+}
+
+.rv-user-info strong{
+  font-size: 14px;
+  color: #fff0dc;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.rv-user-info span{
+  font-size: 12px;
+  color: #d7bba5;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rv-user-caret{
+  font-size: 12px;
+  color: #d7bba5;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+
+.rv-user-dropdown{
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 240px;
+  background: #1c0f08;
+  border: 1px solid rgba(214, 164, 55, 0.18);
+  border-radius: 18px;
+  padding: 10px;
+  box-shadow: 0 20px 34px rgba(0, 0, 0, 0.24);
+  display: grid;
+  gap: 6px;
+  z-index: 2000;
+}
+
+.rv-user-dropdown button{
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.82);
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: left;
+  transition: 0.2s;
+  cursor: pointer;
+}
+
+.rv-user-dropdown button:hover{
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+}
+
+.rv-user-dropdown button.danger{
+  color: #ffb7aa;
+}
+
+.rv-user-dropdown button.danger:hover{
+  background: rgba(209,71,52,0.12);
+  color: #fff;
+}
+
+/* 4. ADMIN NAVBAR CĂN GIỐNG USER */
+.admin-navbar{
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+  width: 100%;
+  background: linear-gradient(90deg, #210b03 0%, #351106 52%, #2a0d04 100%);
+  border-bottom: 1px solid rgba(255, 184, 77, 0.14);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.admin-navbar-inner{
+  width: min(1180px, 92%);
+  margin: 0 auto;
+  min-height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.admin-navbar-left{
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-brand{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: max-content;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.admin-brand-text h2{
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.1;
+  color: #ffd15f;
+  font-weight: 800;
+}
+
+.admin-brand-text span{
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+  color: #d8c0a9;
+}
+
+.admin-menu{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.admin-menu a{
+  color: #f4e5d1;
+  text-decoration: none;
+  padding: 11px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+}
+
+.admin-menu a:hover{
+  background: rgba(255, 184, 77, 0.1);
+  color: #ffd166;
+}
+
+.admin-menu a.active{
+  background: linear-gradient(135deg, #f7a521, #ffcb57);
+  color: #2b1308;
+  box-shadow: 0 8px 18px rgba(247, 165, 33, 0.24);
+}
+
+.admin-navbar-right{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* nếu AdminNavbar dùng lại rv-user-box thì vẫn đẹp */
+/* nếu AdminNavbar vẫn còn admin-user-box cũ thì style lại cho khớp */
+.admin-user-box{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 250px;
+  max-width: 280px;
+  min-height: 54px;
+  padding: 8px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 184, 77, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.admin-user-box .admin-avatar{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffd166, #f7a521);
+  color: #2b1308;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.admin-user-box .admin-user-info{
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-user-box .admin-user-info strong{
+  font-size: 14px;
+  color: #fff0dc;
+  line-height: 1.2;
+}
+
+.admin-user-box .admin-user-info span{
+  font-size: 12px;
+  color: #d7bba5;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 5. HERO GIỮ NGUYÊN STYLE TỐI */
+.hero-section{
+  padding: 46px 0 70px;
+  background:
+    linear-gradient(90deg, rgba(29, 12, 4, 0.96), rgba(71, 19, 6, 0.95)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.04) 0,
+      rgba(255,255,255,0.04) 1px,
+      transparent 1px,
+      transparent 40px
+    );
+  color: #fff;
+}
+
+/* 6. RESPONSIVE */
+@media (max-width: 1200px){
+  .admin-navbar-inner{
+    width: min(1180px, 92%);
+  }
+}
+
+@media (max-width: 1100px){
+  .rv-navbar-inner{
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 16px 0;
+  }
+
+  .rv-menu{
+    order: 3;
+    width: 100%;
+    gap: 18px;
+  }
+}
+
+@media (max-width: 768px){
+  .rv-menu,
+  .admin-menu{
+    width: 100%;
+    gap: 8px;
+  }
+
+  .rv-menu a,
+  .admin-menu a{
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .rv-user-menu-wrap{
+    width: 100%;
+  }
+
+  .rv-user-box,
+  .admin-user-box{
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  .rv-user-dropdown{
+    left: 0;
+    right: 0;
+    min-width: unset;
+    width: 100%;
+  }
+
+  .admin-navbar-inner{
+    width: 92%;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 0;
+  }
+
+  .admin-navbar-left{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .admin-navbar-right{
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
