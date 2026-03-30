@@ -43,40 +43,61 @@ function Profile() {
   };
 
   return (
-    <div>
-      <h2>Cập nhật thông tin</h2>
+  <div className="profile-page">
+    <div className="profile-card">
+      <h1 className="profile-title">Cập nhật thông tin</h1>
 
-      {message && <p>{message}</p>}
+      {message && <div className="profile-message">{message}</div>}
 
-      <form onSubmit={handleUpdate}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Tên"
-          value={form.name}
-          onChange={handleChange}
-        />
+      <form className="profile-form" onSubmit={handleUpdate}>
+        <div className="profile-field">
+          <label>Họ tên</label>
+          <input
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+          />
+        </div>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-        />
+        <div className="profile-field">
+          <label>Email</label>
+          <input
+            type="email"
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+          />
+        </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Mật khẩu mới"
-          value={form.password}
-          onChange={handleChange}
-        />
+        <div className="profile-field">
+          <label>Mật khẩu mới</label>
+          <input
+            type="password"
+            name="password"
+            placeholder="Để trống nếu không đổi"
+            value={form.password}
+            onChange={handleChange}
+          />
+        </div>
 
-        <button type="submit">Cập nhật</button>
+        <div className="profile-actions">
+          <button type="submit" className="profile-btn">
+            Cập nhật
+          </button>
+
+          <button
+            type="button"
+            className="profile-btn secondary"
+            onClick={() => window.history.back()}
+          >
+            Quay lại
+          </button>
+        </div>
       </form>
     </div>
-  );
+  </div>
+);
 }
 
 export default Profile;

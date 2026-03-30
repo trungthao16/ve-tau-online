@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "./App.css";
 
@@ -24,6 +23,7 @@ import AdminPromotions from "./pages/AdminPromotions";
 import AdminSupport from "./pages/AdminSupport";
 
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 
 function AppContent() {
   const location = useLocation();
@@ -41,7 +41,6 @@ function AppContent() {
         <Route path="/trains" element={<TrainList />} />
         <Route path="/booking/:id" element={<Booking />} />
 
-        {/* hỗ trợ cả 2 route */}
         <Route path="/mytickets" element={<MyTickets />} />
         <Route path="/my-tickets" element={<MyTickets />} />
 
@@ -49,6 +48,7 @@ function AppContent() {
         <Route path="/support" element={<Support />} />
 
         <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/edit" element={<EditProfile />} />
 
         {/* ADMIN */}
         <Route
