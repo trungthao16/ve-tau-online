@@ -21,12 +21,15 @@
 
 // export default AdminRoute;
 
-const express = require('express'); // Đổi từ import sang require
+const express = require('express');
 const router = express.Router();
+const adminController = require('../controllers/adminController');
 
 // Các route của bạn ở đây...
 router.get('/', (req, res) => {
     res.json({ message: "Admin API working" });
 });
 
-module.exports = router; // Đổi từ export default sang module.exports
+router.get('/stats', adminController.getStats);
+
+module.exports = router;

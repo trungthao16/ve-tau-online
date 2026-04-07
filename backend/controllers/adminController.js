@@ -75,7 +75,7 @@ exports.getStats = async (req, res) => {
     const tickets = await Ticket.find({ status: "booked" }).populate("train");
 
     const totalRevenue = tickets.reduce((sum, ticket) => {
-      return sum + (ticket.train?.price || 0);
+      return sum + (ticket.price || 0);
     }, 0);
 
     res.json({
