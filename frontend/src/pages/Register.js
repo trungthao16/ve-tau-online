@@ -22,7 +22,8 @@ function Register() {
     try {
       setLoading(true);
       await API.post("/auth/register", form);
-      navigate(`/verify-otp?email=${encodeURIComponent(form.email)}`);
+      alert("Đăng ký thành công! Bạn có thể đăng nhập ngay.");
+      navigate("/login");
     } catch (error) {
       console.log(error.response?.data);
       alert(error.response?.data?.message || "Đăng ký thất bại");

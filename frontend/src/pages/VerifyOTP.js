@@ -39,14 +39,14 @@ function VerifyOTP() {
       setLoading(true);
       setError("");
       setMessage("");
-      
+
       const res = await API.post("/auth/verify-otp", { email, otpCode });
       setMessage(res.data.message);
-      
+
       setTimeout(() => {
         navigate("/login");
       }, 2000);
-      
+
     } catch (err) {
       setError(err.response?.data?.message || "Xác thực thất bại");
     } finally {
@@ -59,7 +59,7 @@ function VerifyOTP() {
       setResendLoading(true);
       setError("");
       setMessage("");
-      
+
       const res = await API.post("/auth/resend-otp", { email });
       setMessage(res.data.message);
     } catch (err) {
@@ -75,7 +75,7 @@ function VerifyOTP() {
         <p className="section-label">Bảo mật tài khoản</p>
         <h1>Xác Thực Email</h1>
         <p className="auth-sub">
-          Chúng tôi đã gửi một mã OTP gồm 6 chữ số đến email <br/>
+          Chúng tôi đã gửi một mã OTP gồm 6 chữ số đến email <br />
           <strong>{email}</strong>
         </p>
 
@@ -100,9 +100,9 @@ function VerifyOTP() {
 
         <p className="auth-footer" style={{ marginTop: '20px' }}>
           Chưa nhận được mã?{" "}
-          <button 
-            type="button" 
-            onClick={handleResend} 
+          <button
+            type="button"
+            onClick={handleResend}
             disabled={resendLoading}
             style={{ background: 'none', border: 'none', color: '#0056b3', cursor: 'pointer', textDecoration: 'underline', padding: 0 }}
           >

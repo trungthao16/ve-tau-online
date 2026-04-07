@@ -22,40 +22,29 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Generate 6-digit OTP
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
-
+    // Tạo user và xác thực ngay (không cần OTP)
     const user = new User({
       name,
       email,
       password: hashedPassword,
       role: role || "user",
-      otpCode,
-      otpExpires,
-      isVerified: false
+      isVerified: true // xác thực ngay không cần email
     });
 
     await user.save();
 
-    // Trả lời người dùng NGAY, không chờ gửi email
     res.status(201).json({
-      message: "Đăng ký thành công, vui lòng kiểm tra email để nhận mã OTP.",
+      message: "Đăng ký thành công! Bạn có thể đăng nhập ngay.",
       email: user.email
-    });
-
-    // Gửi email chạy nền (không block response)
-    sendOTPVerificationEmail(email, otpCode).catch(err => {
-      console.error("Lỗi gửi OTP email:", err.message);
     });
   } catch (error) {
     console.error("Lỗi đăng ký:", error);
-    
+
     // Xử lý lỗi trùng lặp email từ MongoDB (E11000)
     if (error.code === 11000) {
       return res.status(400).json({ message: "Email này đã được sử dụng. Vui lòng đăng nhập hoặc dùng email khác." });
     }
-    
+
     res.status(500).json({ message: error.message });
   }
 };
@@ -106,7 +95,7 @@ exports.login = async (req, res) => {
 exports.verifyOTP = async (req, res) => {
   try {
     const { email, otpCode } = req.body;
-    
+
     if (!email || !otpCode) {
       return res.status(400).json({ message: "Vui lòng cung cấp email và mã OTP" });
     }
@@ -143,7 +132,7 @@ exports.verifyOTP = async (req, res) => {
 exports.resendOTP = async (req, res) => {
   try {
     const { email } = req.body;
-    
+
     if (!email) {
       return res.status(400).json({ message: "Vui lòng cung cấp email" });
     }
@@ -304,4 +293,4 @@ exports.resetPassword = async (req, res) => {
     console.error("Lỗi resetPassword:", error);
     res.status(500).json({ message: "Có lỗi xảy ra. Vui lòng thử lại." });
   }
-};
+};
