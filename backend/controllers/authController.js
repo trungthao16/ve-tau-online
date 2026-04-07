@@ -38,12 +38,15 @@ exports.register = async (req, res) => {
 
     await user.save();
 
-    // Send OTP email
-    await sendOTPVerificationEmail(email, otpCode);
-
+    // Trả lời người dùng NGAY, không chờ gửi email
     res.status(201).json({
       message: "Đăng ký thành công, vui lòng kiểm tra email để nhận mã OTP.",
       email: user.email
+    });
+
+    // Gửi email chạy nền (không block response)
+    sendOTPVerificationEmail(email, otpCode).catch(err => {
+      console.error("Lỗi gửi OTP email:", err.message);
     });
   } catch (error) {
     console.error("Lỗi đăng ký:", error);
@@ -161,9 +164,11 @@ exports.resendOTP = async (req, res) => {
     user.otpExpires = otpExpires;
     await user.save();
 
-    await sendOTPVerificationEmail(email, otpCode);
-
     res.json({ message: "Mã OTP mới đã được gửi đến email của bạn." });
+
+    sendOTPVerificationEmail(email, otpCode).catch(err => {
+      console.error("Lỗi gửi lại OTP email:", err.message);
+    });
   } catch (error) {
     console.error("Lỗi gửi lại OTP:", error);
     res.status(500).json({ message: "Có lỗi xảy ra khi gửi lại OTP" });
