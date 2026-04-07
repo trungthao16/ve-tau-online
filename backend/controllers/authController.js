@@ -242,28 +242,20 @@ exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "Email không tồn tại trong hệ thống" });
 
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 phút
-
-    user.otpCode = otpCode;
-    user.otpExpires = otpExpires;
-    await user.save();
-
-    await sendForgotPasswordEmail(email, otpCode);
-
-    res.json({ message: "Mã OTP đã được gửi đến email của bạn.", email });
+    // Không gửi email, trả lời ngay để cho phép đặt lại mật khẩu
+    res.json({ message: "Xác nhận email thành công. Vui lòng đặt mật khẩu mới.", email });
   } catch (error) {
     console.error("Lỗi forgotPassword:", error);
     res.status(500).json({ message: "Có lỗi xảy ra. Vui lòng thử lại." });
   }
 };
 
-// Quên mật khẩu - Bước 2: Xác thực OTP + Đặt mật khẩu mới
+// Quên mật khẩu - Bước 2: Đặt mật khẩu mới trực tiếp (không cần OTP)
 exports.resetPassword = async (req, res) => {
   try {
-    const { email, otpCode, newPassword } = req.body;
+    const { email, newPassword } = req.body;
 
-    if (!email || !otpCode || !newPassword) {
+    if (!email || !newPassword) {
       return res.status(400).json({ message: "Vui lòng điền đầy đủ thông tin" });
     }
 
@@ -273,14 +265,6 @@ exports.resetPassword = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "Không tìm thấy người dùng" });
-
-    if (user.otpCode !== otpCode) {
-      return res.status(400).json({ message: "Mã OTP không chính xác" });
-    }
-
-    if (user.otpExpires < new Date()) {
-      return res.status(400).json({ message: "Mã OTP đã hết hạn. Vui lòng yêu cầu lại." });
-    }
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(newPassword, salt);
