@@ -57,13 +57,40 @@ exports.getStats = async (req, res) => {
       });
     }
 
+    // 4. Thống kê Top 5 chuyến tàu phổ biến nhất
+    const topTrainsAgg = await Ticket.aggregate([
+      { $match: { status: "booked", paymentStatus: "paid" } },
+      { $group: { _id: "$train", count: { $sum: 1 }, revenue: { $sum: "$price" } } },
+      { $sort: { count: -1 } },
+      { $limit: 5 },
+      {
+        $lookup: {
+          from: "trains",
+          localField: "_id",
+          foreignField: "_id",
+          as: "trainDetails"
+        }
+      },
+      { $unwind: "$trainDetails" },
+      {
+        $project: {
+          count: 1,
+          revenue: 1,
+          name: "$trainDetails.name",
+          from: "$trainDetails.from",
+          to: "$trainDetails.to"
+        }
+      }
+    ]);
+
     res.json({
       totalUsers,
       totalTrains,
       totalTickets,
       totalRevenue,
       passengerTypes: Object.values(passengerStatsMap),
-      dailyRevenue
+      dailyRevenue,
+      topTrains: topTrainsAgg
     });
   } catch (error) {
     console.log("getStats error:", error);

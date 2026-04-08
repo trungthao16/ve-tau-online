@@ -33,6 +33,7 @@ function AdminDashboard() {
     totalRevenue: 0,
     passengerTypes: [],
     dailyRevenue: [],
+    topTrains: [],
   });
 
   useEffect(() => {
@@ -172,6 +173,47 @@ function AdminDashboard() {
                   />
                   <Tooltip formatter={(val) => [`${val} vé`, ""]} />
                 </PieChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </div>
+
+        {/* Top 5 Popular Routes Section */}
+        <div className="admin-charts-section full-width">
+          <div className="admin-chart-card">
+            <div className="admin-chart-header">
+              <h3>🏆 Top 5 Tuyến tàu phổ biến nhất</h3>
+              <span className="chart-subtitle">Dựa trên số lượng vé đã thanh toán</span>
+            </div>
+            {(!stats.topTrains || stats.topTrains.length === 0) ? (
+              <div className="chart-empty">Chưa có dữ liệu tuyến tàu.</div>
+            ) : (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  layout="vertical"
+                  data={stats.topTrains}
+                  margin={{ top: 10, right: 30, left: 40, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                  <XAxis type="number" hide />
+                  <YAxis
+                    dataKey="name"
+                    type="category"
+                    tick={{ fontSize: 12, fontWeight: "bold" }}
+                    width={100}
+                  />
+                  <Tooltip
+                    formatter={(val) => [`${val} vé`, "Số lượng"]}
+                    contentStyle={{ borderRadius: "10px", border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
+                  />
+                  <Bar
+                    dataKey="count"
+                    fill="#6366f1"
+                    radius={[0, 6, 6, 0]}
+                    barSize={30}
+                    label={{ position: "right", fontSize: 12, fontWeight: "bold" }}
+                  />
+                </BarChart>
               </ResponsiveContainer>
             )}
           </div>

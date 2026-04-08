@@ -59,10 +59,51 @@ function MyTickets() {
     }
   };
 
-  const handleCancel = async (ticketId) => {
+  const handleCancel = async (ticketId, ticket) => {
+    // Chỉ tính phí nếu vé đã thanh toán
+    if (ticket.paymentStatus === "paid") {
+      const now = new Date();
+      const depDate = new Date(ticket.train?.departureDate);
+      const [hours, minutes] = (ticket.train?.departureTime || "00:00").split(":");
+      depDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
+
+      const timeDiffMs = depDate - now;
+      const hoursDiff = timeDiffMs / (1000 * 60 * 60);
+
+      let refundPercent = 0;
+      let feePercent = 100;
+
+      if (hoursDiff > 24) {
+        refundPercent = 90;
+        feePercent = 10;
+      } else if (hoursDiff >= 4) {
+        refundPercent = 50;
+        feePercent = 50;
+      } else {
+        refundPercent = 0;
+        feePercent = 100;
+      }
+
+      const fee = Math.round(ticket.price * (feePercent / 100));
+      const refund = ticket.price - fee;
+
+      const confirmMsg = 
+        `Bạn có chắc chắn muốn hủy vé này?\n\n` +
+        `• Giá vé: ${ticket.price.toLocaleString("vi-VN")}đ\n` +
+        `• Phí hủy (${feePercent}%): ${fee.toLocaleString("vi-VN")}đ\n` +
+        `• Số tiền hoàn lại: ${refund.toLocaleString("vi-VN")}đ\n\n` +
+        (refundPercent === 0 
+          ? "⚠️ Lưu ý: Vé hủy dưới 4h không được hoàn tiền." 
+          : "Số tiền sẽ được hoàn lại theo phương thức thanh toán của bạn.");
+
+      if (!window.confirm(confirmMsg)) return;
+    } else {
+      if (!window.confirm("Bạn có chắc chắn muốn hủy vé này?")) return;
+    }
+
     try {
-      await API.put(`/tickets/${ticketId}/cancel`);
-      toast.success("Đã hủy vé thành công!");
+      const res = await API.put(`/tickets/${ticketId}/cancel`);
+      toast.success(res.data.message || "Đã hủy vé thành công!");
       refreshTickets();
     } catch (error) {
       console.log("Lỗi hủy vé:", error);
@@ -233,7 +274,7 @@ function MyTickets() {
                 {ticket.status !== "cancelled" && (
                   <button
                     className="cancel-btn"
-                    onClick={() => handleCancel(ticket._id)}
+                    onClick={() => handleCancel(ticket._id, ticket)}
                   >
                     Hủy vé
                   </button>

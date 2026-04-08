@@ -135,7 +135,7 @@ exports.getMyTickets = async (req, res) => {
 
 exports.cancelTicket = async (req, res) => {
   try {
-    const ticket = await Ticket.findById(req.params.id);
+    const ticket = await Ticket.findById(req.params.id).populate("train");
 
     if (!ticket) {
       return res.status(404).json({ message: "Không tìm thấy vé" });
@@ -145,11 +145,65 @@ exports.cancelTicket = async (req, res) => {
       return res.status(403).json({ message: "Không có quyền hủy vé này" });
     }
 
+    if (ticket.status === "cancelled") {
+      return res.status(400).json({ message: "Vé này đã được hủy trước đó" });
+    }
+
+    let refundAmount = 0;
+    let cancellationFee = 0;
+
+    // Chỉ tính tiền hoàn lại nếu vé đã được thanh toán
+    if (ticket.paymentStatus === "paid" && ticket.train) {
+      const now = new Date();
+      
+      // Kết hợp departureDate và departureTime để có thời điểm khởi hành chính xác
+      const depDate = new Date(ticket.train.departureDate); // YYYY-MM-DD
+      const [hours, minutes] = (ticket.train.departureTime || "00:00").split(":");
+      depDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
+
+      const timeDiffMs = depDate - now;
+      const hoursDiff = timeDiffMs / (1000 * 60 * 60);
+
+      if (hoursDiff > 24) {
+        // Hủy trước > 24h: Hoàn 90%, Phí 10%
+        cancellationFee = Math.round(ticket.price * 0.1);
+        refundAmount = ticket.price - cancellationFee;
+      } else if (hoursDiff >= 4) {
+        // Hủy từ 4h - 24h: Hoàn 50%, Phí 50%
+        cancellationFee = Math.round(ticket.price * 0.5);
+        refundAmount = ticket.price - cancellationFee;
+      } else {
+        // Hủy dưới 4h: Không hoàn tiền, Phí 100%
+        cancellationFee = ticket.price;
+        refundAmount = 0;
+      }
+    }
+
     ticket.status = "cancelled";
+    ticket.refundAmount = refundAmount;
+    ticket.cancellationFee = cancellationFee;
     await ticket.save();
 
-    res.json({ message: "Hủy vé thành công", ticket });
+    let message = "Hủy vé thành công!";
+    if (ticket.paymentStatus === "paid") {
+      if (refundAmount > 0) {
+        message = `Hủy vé thành công! Số tiền hoàn lại: ${refundAmount.toLocaleString("vi-VN")}đ (Phí hủy: ${cancellationFee.toLocaleString("vi-VN")}đ)`;
+      } else {
+        message = "Hủy vé thành công! Vé hủy dưới 4h không được hoàn tiền.";
+      }
+    }
+
+    res.json({ 
+      message, 
+      ticket: {
+        _id: ticket._id,
+        status: ticket.status,
+        refundAmount: ticket.refundAmount,
+        cancellationFee: ticket.cancellationFee
+      } 
+    });
   } catch (error) {
+    console.error("CANCEL TICKET ERROR:", error);
     res.status(500).json({ message: error.message });
   }
 };
