@@ -1,19 +1,4 @@
-// const mongoose = require("mongoose")
-
-// const userSchema = new mongoose.Schema({
-//     name:String,
-//     email:String,
-//     password:String,
-//     role:{
-//         type:String,
-//         enum:["user","staff","admin"],
-//         default:"user"
-//     }
-// })
-
-// module.exports = mongoose.model("User",userSchema)
-
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
@@ -44,22 +29,12 @@ const userSchema = new mongoose.Schema(
 
     isVerified: {
       type: Boolean,
-      default: false
-    },
-    
-    otpCode: {
-      type: String,
-      default: null
-    },
-    
-    otpExpires: {
-      type: Date,
-      default: null
+      default: true
     }
   },
   {
     timestamps: true
   }
-)
+);
 
-module.exports = mongoose.model("User", userSchema)
+module.exports = mongoose.model("User", userSchema);

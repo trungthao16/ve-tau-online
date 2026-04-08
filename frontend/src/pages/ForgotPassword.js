@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import toast from "react-hot-toast";
 
 // Bước 1: Nhập email → Xác nhận tồn tại
 // Bước 2: Nhập mật khẩu mới (không cần OTP)
@@ -12,18 +13,20 @@ function ForgotPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   // Bước 1: Kiểm tra email có tồn tại không
   const handleCheckEmail = async (e) => {
     e.preventDefault();
-    if (!email) { setError("Vui lòng nhập email"); return; }
+    if (!email) {
+      toast.error("Vui lòng nhập email");
+      return;
+    }
     try {
-      setLoading(true); setError("");
+      setLoading(true);
       await API.post("/auth/forgot-password", { email });
       setStep(2);
     } catch (err) {
-      setError(err.response?.data?.message || "Không tìm thấy email trong hệ thống.");
+      toast.error(err.response?.data?.message || "Không tìm thấy email trong hệ thống.");
     } finally {
       setLoading(false);
     }
@@ -32,16 +35,26 @@ function ForgotPassword() {
   // Bước 2: Đặt mật khẩu mới
   const handleResetPassword = async (e) => {
     e.preventDefault();
-    if (!newPassword || !confirmPassword) { setError("Vui lòng điền đầy đủ thông tin"); return; }
-    if (newPassword !== confirmPassword) { setError("Mật khẩu xác nhận không khớp"); return; }
-    if (newPassword.length < 6) { setError("Mật khẩu phải có ít nhất 6 ký tự"); return; }
+    if (!newPassword || !confirmPassword) {
+      toast.error("Vui lòng điền đầy đủ thông tin");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("Mật khẩu xác nhận không khớp");
+      return;
+    }
+    if (newPassword.length < 6) {
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự");
+      return;
+    }
 
     try {
-      setLoading(true); setError("");
+      setLoading(true);
       await API.post("/auth/reset-password", { email, newPassword });
+      toast.success("Đặt lại mật khẩu thành công!");
       setStep(3);
     } catch (err) {
-      setError(err.response?.data?.message || "Đặt lại mật khẩu thất bại.");
+      toast.error(err.response?.data?.message || "Đặt lại mật khẩu thất bại.");
     } finally {
       setLoading(false);
     }
@@ -57,8 +70,6 @@ function ForgotPassword() {
             <p className="section-label">Hỗ trợ tài khoản</p>
             <h1>Quên Mật Khẩu</h1>
             <p className="auth-sub">Nhập email đã đăng ký để tiếp tục đặt lại mật khẩu.</p>
-
-            {error && <div style={styles.error}>{error}</div>}
 
             <form onSubmit={handleCheckEmail} className="auth-form">
               <label>Địa chỉ Email</label>
@@ -85,8 +96,6 @@ function ForgotPassword() {
             <p className="section-label">Đặt lại mật khẩu</p>
             <h1>Mật Khẩu Mới</h1>
             <p className="auth-sub">Đặt mật khẩu mới cho tài khoản <strong>{email}</strong></p>
-
-            {error && <div style={styles.error}>{error}</div>}
 
             <form onSubmit={handleResetPassword} className="auth-form">
               <label>Mật khẩu mới</label>
@@ -136,15 +145,6 @@ function ForgotPassword() {
 }
 
 const styles = {
-  error: {
-    padding: "12px 16px",
-    backgroundColor: "#fef2f2",
-    color: "#b91c1c",
-    border: "1px solid #fecaca",
-    borderRadius: "10px",
-    marginBottom: "16px",
-    fontSize: "14px"
-  },
   linkBtn: {
     background: "none",
     border: "none",

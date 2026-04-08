@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import API from "../api/axios";
+import toast from "react-hot-toast";
 
 function AdminTickets() {
   const [tickets, setTickets] = useState([]);
@@ -14,7 +15,7 @@ function AdminTickets() {
       setTickets(res.data || []);
     } catch (error) {
       console.error("Lỗi lấy danh sách vé:", error);
-      alert("Không tải được danh sách vé");
+      toast.error("Không tải được danh sách vé");
     } finally {
       setLoading(false);
     }
@@ -32,7 +33,7 @@ function AdminTickets() {
       fetchTickets();
     } catch (error) {
       console.error("Lỗi hủy vé:", error);
-      alert(error.response?.data?.message || "Hủy vé thất bại");
+      toast.error(error.response?.data?.message || "Hủy vé thất bại");
     }
   };
 
@@ -44,7 +45,7 @@ function AdminTickets() {
       fetchTickets();
     } catch (error) {
       console.error("Lỗi xóa vé:", error);
-      alert(error.response?.data?.message || "Xóa vé thất bại");
+      toast.error(error.response?.data?.message || "Xóa vé thất bại");
     }
   };
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
+import toast from "react-hot-toast";
 
 function Support() {
   const [subject, setSubject] = useState("");
@@ -29,7 +30,7 @@ function Support() {
     e.preventDefault();
 
     if (!subject.trim() || !message.trim()) {
-      alert("Vui lòng nhập đầy đủ tiêu đề và nội dung");
+      toast.error("Vui lòng nhập đầy đủ tiêu đề và nội dung");
       return;
     }
 
@@ -43,10 +44,10 @@ function Support() {
       setSubject("");
       setMessage("");
       await fetchMySupports();
-      alert("Gửi yêu cầu hỗ trợ thành công");
+      toast.success("Gửi yêu cầu hỗ trợ thành công");
     } catch (error) {
       console.error("Lỗi gửi hỗ trợ:", error);
-      alert(error.response?.data?.message || "Gửi yêu cầu hỗ trợ thất bại");
+      toast.error(error.response?.data?.message || "Gửi yêu cầu hỗ trợ thất bại");
     } finally {
       setSubmitting(false);
     }

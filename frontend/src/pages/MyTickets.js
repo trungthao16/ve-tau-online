@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
 import TicketQRCode from "../components/TicketQRCode";
+import toast from "react-hot-toast";
 
 function MyTickets() {
   const [tickets, setTickets] = useState([]);
@@ -32,12 +33,12 @@ function MyTickets() {
     const paymentStatus = params.get("payment");
 
     if (paymentStatus === "success") {
-      alert("Thanh toán VNPay thành công!");
+      toast.success("🎉 Thanh toán VNPay thành công!");
       window.history.replaceState({}, document.title, window.location.pathname);
     }
 
     if (paymentStatus === "failed") {
-      alert("Thanh toán VNPay thất bại hoặc bị hủy.");
+      toast.error("Thanh toán VNPay thất bại hoặc bị hủy.");
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, [user]);
@@ -61,11 +62,11 @@ function MyTickets() {
   const handleCancel = async (ticketId) => {
     try {
       await API.put(`/tickets/${ticketId}/cancel`);
-      alert("Hủy vé thành công!");
+      toast.success("Đã hủy vé thành công!");
       refreshTickets();
     } catch (error) {
       console.log("Lỗi hủy vé:", error);
-      alert(error.response?.data?.message || "Hủy vé thất bại.");
+      toast.error(error.response?.data?.message || "Hủy vé thất bại.");
     }
   };
 
@@ -76,11 +77,11 @@ function MyTickets() {
       if (res.data?.paymentUrl) {
         window.location.href = res.data.paymentUrl;
       } else {
-        alert("Không lấy được link thanh toán.");
+        toast.error("Không lấy được link thanh toán.");
       }
     } catch (error) {
       console.log("Lỗi tạo thanh toán VNPay:", error);
-      alert(error.response?.data?.message || "Không tạo được link thanh toán.");
+      toast.error(error.response?.data?.message || "Không tạo được link thanh toán.");
     }
   };
 

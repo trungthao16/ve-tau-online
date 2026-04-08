@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import toast from "react-hot-toast";
 
 function Login() {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      alert("Đăng nhập thành công!");
+      toast.success("Đăng nhập thành công!");
 
       if (res.data.user.role === "admin") {
         navigate("/admin");
@@ -35,10 +36,9 @@ function Login() {
     } catch (error) {
       console.log(error);
       if (error.response?.data?.notVerified) {
-        alert("Tài khoản chưa được xác thực. Đang chuyển hướng...");
-        navigate(`/verify-otp?email=${encodeURIComponent(error.response.data.email || form.email)}`);
+        toast.error("Tài khoản chưa được xác thực.");
       } else {
-        alert(error.response?.data?.message || "Email hoặc mật khẩu không đúng.");
+        toast.error(error.response?.data?.message || "Email hoặc mật khẩu không đúng.");
       }
     }
   };

@@ -125,6 +125,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import SeatMap from "../components/SeatMap";
+import toast from "react-hot-toast";
 
 function Booking() {
   const { id } = useParams();
@@ -157,7 +158,7 @@ function Booking() {
         setTrain(res.data);
       } catch (error) {
         console.error("Lỗi lấy chi tiết tàu:", error);
-        alert("Không tải được thông tin chuyến tàu");
+        toast.error("Định tuyến không tải được, vui lòng thử lại");
       }
     };
 
@@ -233,12 +234,12 @@ function Booking() {
     e.preventDefault();
 
     if (!seatNumber || !coachNumber) {
-      alert("Vui lòng chọn ghế trên sơ đồ");
+      toast.error("Vui lòng chọn ghế trên sơ đồ");
       return;
     }
 
     if (!passengerName.trim() || !cccd.trim()) {
-      alert("Vui lòng nhập đầy đủ Họ tên và Số CCCD");
+      toast.error("Vui lòng nhập đầy đủ Họ tên và Số CCCD");
       return;
     }
 
@@ -262,13 +263,13 @@ function Booking() {
       const res = await API.post("/tickets", payload);
 
       console.log("BOOKING SUCCESS:", res.data);
-      alert("Đặt vé thành công");
+      toast.success("Đặt vé thành công! Vui lòng thanh toán để xoác nhận vé.");
       navigate("/my-tickets");
     } catch (error) {
       console.error("BOOKING ERROR:", error);
       console.error("BOOKING ERROR RESPONSE:", error.response?.data);
 
-      alert(error.response?.data?.message || "Đặt vé thất bại");
+      toast.error(error.response?.data?.message || "Đặt vé thất bại, vui lòng thử lại");
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function EditProfile() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ function EditProfile() {
     };
 
     localStorage.setItem("user", JSON.stringify(updatedUser));
-    alert("Cập nhật thông tin thành công!");
+    toast.success("Cập nhật thông tin thành công!");
     navigate("/profile");
     window.location.reload();
   };

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../api/axios";
+import toast from "react-hot-toast";
 
 function Register() {
   const navigate = useNavigate();
@@ -22,11 +23,11 @@ function Register() {
     try {
       setLoading(true);
       await API.post("/auth/register", form);
-      alert("Đăng ký thành công! Bạn có thể đăng nhập ngay.");
+      toast.success("Đăng ký thành công! Bạn có thể đăng nhập ngay.");
       navigate("/login");
     } catch (error) {
       console.log(error.response?.data);
-      alert(error.response?.data?.message || "Đăng ký thất bại");
+      toast.error(error.response?.data?.message || "Đăng ký thất bại");
     } finally {
       setLoading(false);
     }

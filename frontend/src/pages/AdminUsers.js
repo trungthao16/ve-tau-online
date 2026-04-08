@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import API from "../api/axios";
+import toast from "react-hot-toast";
 
 function AdminUsers() {
   const [users, setUsers] = useState([]);
@@ -14,7 +15,7 @@ function AdminUsers() {
       setUsers(res.data || []);
     } catch (error) {
       console.error("Lỗi lấy danh sách user:", error);
-      alert("Không tải được danh sách người dùng");
+      toast.error("Không tải được danh sách người dùng");
     } finally {
       setLoading(false);
     }
@@ -34,7 +35,7 @@ function AdminUsers() {
       fetchUsers();
     } catch (error) {
       console.error("Lỗi đổi quyền:", error);
-      alert("Đổi quyền thất bại");
+      toast.error("Đổi quyền thất bại");
     }
   };
 
@@ -46,7 +47,7 @@ function AdminUsers() {
       fetchUsers();
     } catch (error) {
       console.error("Lỗi xóa user:", error);
-      alert("Xóa người dùng thất bại");
+      toast.error("Xóa người dùng thất bại");
     }
   };
 

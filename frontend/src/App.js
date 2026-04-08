@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import "./App.css";
 
 import Navbar from "./components/Navbar";
@@ -8,7 +9,6 @@ import AdminRoute from "./components/AdminRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import VerifyOTP from "./pages/VerifyOTP";
 import ForgotPassword from "./pages/ForgotPassword";
 import TrainList from "./pages/TrainList";
 import MyTickets from "./pages/MyTickets";
@@ -34,13 +34,27 @@ function AppContent() {
   return (
     <>
       {isAdminPage ? <AdminNavbar /> : <Navbar />}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3500,
+          style: {
+            borderRadius: "10px",
+            background: "#1f1712",
+            color: "#fff",
+            fontSize: "14px",
+            fontFamily: "Inter, sans-serif",
+          },
+          success: { iconTheme: { primary: "#4ca37d", secondary: "#fff" } },
+          error: { iconTheme: { primary: "#c9503a", secondary: "#fff" } },
+        }}
+      />
 
       <Routes>
         {/* USER */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/trains" element={<TrainList />} />
         <Route path="/booking/:id" element={<Booking />} />

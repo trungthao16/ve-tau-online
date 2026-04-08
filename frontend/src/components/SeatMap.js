@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import API from "../api/axios";
+import toast from "react-hot-toast";
 
 function SeatMap({ train, onSeatSelect }) {
   const [activeCoach, setActiveCoach] = useState(0);
@@ -71,7 +72,7 @@ function SeatMap({ train, onSeatSelect }) {
         const extraPrice = Number(train.price) * (currentCoach.priceMultiplier - 1);
         onSeatSelect(currentCoach.coachNumber, seatNum, extraPrice);
       } catch (err) {
-        alert(err.response?.data?.message || "Không thể giữ chỗ");
+        toast.error(err.response?.data?.message || "Không thể giữ chỗ");
         // Reload seat map if someone else locked it
         try {
           const res = await API.get(`/trains/${train._id}/booked-seats`);

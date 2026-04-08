@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
+import toast from "react-hot-toast";
 
 function AdminSupport() {
   const [supports, setSupports] = useState([]);
@@ -43,11 +44,11 @@ function AdminSupport() {
         status: statusMap[id] || "pending",
       });
 
-      alert("Phản hồi hỗ trợ thành công");
+      toast.success("Phản hồi hỗ trợ thành công");
       fetchSupports();
     } catch (error) {
       console.error("Lỗi phản hồi hỗ trợ:", error);
-      alert(error.response?.data?.message || "Phản hồi thất bại");
+      toast.error(error.response?.data?.message || "Phản hồi thất bại");
     }
   };
 
@@ -57,11 +58,11 @@ function AdminSupport() {
 
     try {
       await API.delete(`/support/${id}`);
-      alert("Xóa yêu cầu hỗ trợ thành công");
+      toast.success("Xóa yêu cầu hỗ trợ thành công");
       fetchSupports();
     } catch (error) {
       console.error("Lỗi xóa hỗ trợ:", error);
-      alert(error.response?.data?.message || "Xóa thất bại");
+      toast.error(error.response?.data?.message || "Xóa thất bại");
     }
   };
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function Home() {
   const navigate = useNavigate();
@@ -63,35 +64,35 @@ function Home() {
 
   const handleSearch = () => {
     if (!from.trim() || !to.trim()) {
-      alert("Vui lòng nhập ga đi và ga đến");
+      toast.error("Vui lòng nhập ga đi và ga đến");
       return;
     }
 
     if (from.trim().toLowerCase() === to.trim().toLowerCase()) {
-      alert("Ga đi và ga đến không được trùng nhau");
+      toast.error("Ga đi và ga đến không được trùng nhau");
       return;
     }
 
     if (!date) {
-      alert("Vui lòng chọn ngày đi");
+      toast.error("Vui lòng chọn ngày đi");
       return;
     }
 
     if (tripType === "roundtrip") {
       if (!returnDate) {
-        alert("Vui lòng chọn ngày về");
+        toast.error("Vui lòng chọn ngày về");
         return;
       }
 
       if (new Date(returnDate) < new Date(date)) {
-        alert("Ngày về phải lớn hơn hoặc bằng ngày đi");
+        toast.error("Ngày về phải lớn hơn hoặc bằng ngày đi");
         return;
       }
     }
 
     if (tripType === "group") {
       if (!groupSize.trim()) {
-        alert("Vui lòng nhập số lượng đoàn");
+        toast.error("Vui lòng nhập số lượng đoàn");
         return;
       }
     }

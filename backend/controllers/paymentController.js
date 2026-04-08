@@ -63,11 +63,6 @@ exports.createVNPayPayment = async (req, res) => {
     const vnpUrl = process.env.VNP_URL;
     const returnUrl = process.env.VNP_RETURNURL;
 
-    console.log("TMNCODE:", tmnCode);
-    console.log("HASHSECRET:", secretKey);
-    console.log("VNP_URL:", vnpUrl);
-    console.log("RETURN_URL:", returnUrl);
-
     if (!tmnCode || !secretKey || !vnpUrl || !returnUrl) {
       return res.status(500).json({ message: "Thiếu cấu hình VNPay trong .env" });
     }
@@ -102,19 +97,15 @@ exports.createVNPayPayment = async (req, res) => {
     vnp_Params = sortObject(vnp_Params);
 
     const signData = qs.stringify(vnp_Params, { encode: false });
-    console.log("SIGN DATA:", signData);
 
     const signed = crypto
       .createHmac("sha512", secretKey)
       .update(Buffer.from(signData, "utf-8"))
       .digest("hex");
 
-    console.log("SIGNED:", signed);
-
     vnp_Params.vnp_SecureHash = signed;
 
     const paymentUrl = `${vnpUrl}?${qs.stringify(vnp_Params, { encode: false })}`;
-    console.log("PAYMENT URL:", paymentUrl);
 
     return res.json({
       message: "Tạo link thanh toán thành công",
@@ -140,15 +131,11 @@ exports.vnpayReturn = async (req, res) => {
     vnp_Params = sortObject(vnp_Params);
 
     const signData = qs.stringify(vnp_Params, { encode: false });
-    console.log("RETURN SIGN DATA:", signData);
 
     const signed = crypto
       .createHmac("sha512", process.env.VNP_HASHSECRET)
       .update(Buffer.from(signData, "utf-8"))
       .digest("hex");
-
-    console.log("RETURN SECURE HASH:", secureHash);
-    console.log("RETURN SIGNED:", signed);
 
     if (secureHash !== signed) {
       return res.status(400).send("Sai chữ ký bảo mật");

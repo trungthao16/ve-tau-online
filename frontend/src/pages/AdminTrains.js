@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
+import toast from "react-hot-toast";
 
 function AdminTrains() {
   const [trains, setTrains] = useState([]);
@@ -57,10 +58,10 @@ function AdminTrains() {
     try {
       if (editingId) {
         await API.put(`/trains/${editingId}`, form);
-        alert("Cập nhật tàu thành công");
+        toast.success("Cập nhật tàu thành công");
       } else {
         await API.post("/trains", form);
-        alert("Thêm tàu thành công");
+        toast.success("Thêm tàu thành công");
       }
 
       resetForm();
@@ -70,7 +71,7 @@ function AdminTrains() {
       console.log("SUBMIT RESPONSE:", error.response);
       console.log("SUBMIT DATA:", error.response?.data);
 
-      alert(error.response?.data?.message || "Có lỗi xảy ra");
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra");
     }
   };
 
@@ -96,12 +97,12 @@ function AdminTrains() {
 
     try {
       await API.delete(`/trains/${id}`);
-      alert("Xóa tàu thành công");
+      toast.success("Xóa tàu thành công");
       fetchTrains();
     } catch (error) {
       console.log("DELETE ERROR:", error);
       console.log("DELETE DATA:", error.response?.data);
-      alert(error.response?.data?.message || "Xóa thất bại");
+      toast.error(error.response?.data?.message || "Xóa thất bại");
     }
   };
 

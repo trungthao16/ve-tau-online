@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
+import toast from "react-hot-toast";
 
 const initialForm = {
   code: "",
@@ -73,7 +74,7 @@ function AdminPromotions() {
     e.preventDefault();
 
     if (!form.code || !form.title || !form.discountValue || !form.startDate || !form.endDate) {
-      alert("Vui lòng nhập đầy đủ các trường bắt buộc");
+      toast.error("Vui lòng nhập đầy đủ các trường bắt buộc");
       return;
     }
 
@@ -89,17 +90,17 @@ function AdminPromotions() {
 
       if (editingId) {
         await API.put(`/promotions/${editingId}`, payload);
-        alert("Cập nhật khuyến mãi thành công");
+        toast.success("Cập nhật khuyến mãi thành công");
       } else {
         await API.post("/promotions", payload);
-        alert("Thêm khuyến mãi thành công");
+        toast.success("Thêm khuyến mãi thành công");
       }
 
       resetForm();
       fetchPromotions();
     } catch (error) {
       console.error("Lỗi lưu khuyến mãi:", error);
-      alert(error.response?.data?.message || "Lưu khuyến mãi thất bại");
+      toast.error(error.response?.data?.message || "Lưu khuyến mãi thất bại");
     } finally {
       setSaving(false);
     }
@@ -111,11 +112,11 @@ function AdminPromotions() {
 
     try {
       await API.delete(`/promotions/${id}`);
-      alert("Xóa khuyến mãi thành công");
+      toast.success("Xóa khuyến mãi thành công");
       fetchPromotions();
     } catch (error) {
       console.error("Lỗi xóa khuyến mãi:", error);
-      alert(error.response?.data?.message || "Xóa khuyến mãi thất bại");
+      toast.error(error.response?.data?.message || "Xóa khuyến mãi thất bại");
     }
   };
 
