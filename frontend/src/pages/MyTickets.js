@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
+import TicketQRCode from "../components/TicketQRCode";
 
 function MyTickets() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedTicket, setSelectedTicket] = useState(null);
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -86,6 +88,10 @@ function MyTickets() {
     if (ticket.paymentStatus === "paid") return "Đã thanh toán";
     if (ticket.paymentStatus === "failed") return "Thanh toán thất bại";
     return "Chưa thanh toán";
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   if (!user) {
@@ -213,6 +219,16 @@ function MyTickets() {
                   </button>
                 )}
 
+                {ticket.status !== "cancelled" && ticket.paymentStatus === "paid" && (
+                  <button
+                    className="cancel-btn"
+                    style={{ background: "#c9503a", color: "#fff", border: "none" }}
+                    onClick={() => setSelectedTicket(ticket)}
+                  >
+                    🎟️ Xem vé điện tử
+                  </button>
+                )}
+
                 {ticket.status !== "cancelled" && (
                   <button
                     className="cancel-btn"
@@ -225,6 +241,15 @@ function MyTickets() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Tích hợp Modal sinh E-Ticket */}
+      {selectedTicket && (
+        <TicketQRCode 
+          ticket={selectedTicket} 
+          onClose={() => setSelectedTicket(null)} 
+          onPrint={handlePrint}
+        />
       )}
     </div>
   );

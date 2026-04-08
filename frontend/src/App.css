@@ -3507,3 +3507,40 @@ body{
   border-top: 1px solid rgba(255, 255, 255, 0.15);
   font-size: 16px;
 }
+
+/* =========================
+   PRINT STYLES FOR TICKETS
+========================= */
+@media print {
+  /* Hide everything else */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Make only the ticket visible */
+  .printable-ticket, .printable-ticket * {
+    visibility: visible;
+  }
+  
+  .printable-ticket {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Remove background colors and shadows */
+    box-shadow: none !important;
+    border: 2px solid #000 !important;
+  }
+  
+  /* Make header printable */
+  .printable-ticket > div:first-child {
+    background-color: #000 !important;
+    color: #fff !important;
+    -webkit-print-color-adjust: exact;
+  }
+  
+  /* Hide the close/print buttons */
+  .no-print {
+    display: none !important;
+  }
+}
