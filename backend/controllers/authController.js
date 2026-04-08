@@ -13,7 +13,7 @@ exports.register = async (req, res) => {
       if (existingUser.isVerified) {
         return res.status(400).json({ message: "Email đã tồn tại" });
       } else {
-        // Remove unverified user so they can register again
+        // Xóa user chưa xác thực để đăng ký lại
         await User.deleteOne({ email });
       }
     }
@@ -22,19 +22,29 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Tạo user và xác thực ngay (không cần OTP)
+    // Tạo OTP 6 chữ số
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 phút
+
     const user = new User({
       name,
       email,
       password: hashedPassword,
       role: role || "user",
-      isVerified: true // xác thực ngay không cần email
+      isVerified: false,
+      otpCode,
+      otpExpires
     });
 
     await user.save();
 
+    // Gửi email OTP (bất đồng bộ - không block response)
+    sendOTPVerificationEmail(email, otpCode).catch(err => {
+      console.error("Lỗi gửi OTP email:", err.message);
+    });
+
     res.status(201).json({
-      message: "Đăng ký thành công! Bạn có thể đăng nhập ngay.",
+      message: "Đăng ký thành công! Vui lòng kiểm tra email để lấy mã OTP xác thực.",
       email: user.email
     });
   } catch (error) {
@@ -233,7 +243,7 @@ exports.validatePromotionCode = async (req, res) => {
   }
 };
 
-// Quên mật khẩu - Bước 1: Gửi OTP
+// Quên mật khẩu - Bước 1: Gửi OTP qua email
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -242,21 +252,33 @@ exports.forgotPassword = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "Email không tồn tại trong hệ thống" });
 
-    // Không gửi email, trả lời ngay để cho phép đặt lại mật khẩu
-    res.json({ message: "Xác nhận email thành công. Vui lòng đặt mật khẩu mới.", email });
+    // Tạo OTP 6 chữ số, hiệu lực 10 phút
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+
+    user.otpCode = otpCode;
+    user.otpExpires = otpExpires;
+    await user.save();
+
+    // Gửi email OTP bất đồng bộ
+    sendForgotPasswordEmail(email, otpCode).catch(err => {
+      console.error("Lỗi gửi email quên mật khẩu:", err.message);
+    });
+
+    res.json({ message: "Mã OTP đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư.", email });
   } catch (error) {
     console.error("Lỗi forgotPassword:", error);
     res.status(500).json({ message: "Có lỗi xảy ra. Vui lòng thử lại." });
   }
 };
 
-// Quên mật khẩu - Bước 2: Đặt mật khẩu mới trực tiếp (không cần OTP)
+// Quên mật khẩu - Bước 2: Xác thực OTP + Đặt mật khẩu mới
 exports.resetPassword = async (req, res) => {
   try {
-    const { email, newPassword } = req.body;
+    const { email, otpCode, newPassword } = req.body;
 
-    if (!email || !newPassword) {
-      return res.status(400).json({ message: "Vui lòng điền đầy đủ thông tin" });
+    if (!email || !otpCode || !newPassword) {
+      return res.status(400).json({ message: "Vui lòng điền đầy đủ thông tin (Email, OTP, Mật khẩu mới)" });
     }
 
     if (newPassword.length < 6) {
@@ -265,6 +287,14 @@ exports.resetPassword = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
+    if (user.otpCode !== otpCode) {
+      return res.status(400).json({ message: "Mã OTP không chính xác" });
+    }
+
+    if (user.otpExpires < new Date()) {
+      return res.status(400).json({ message: "Mã OTP đã hết hạn. Vui lòng yêu cầu lại." });
+    }
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(newPassword, salt);
