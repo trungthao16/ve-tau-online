@@ -145,6 +145,11 @@ function Booking() {
   const [activePromotions, setActivePromotions] = useState([]);
   const [showPromos, setShowPromos] = useState(false);
 
+  // Thêm state cho Hành Khách
+  const [passengerName, setPassengerName] = useState("");
+  const [cccd, setCccd] = useState("");
+  const [passengerType, setPassengerType] = useState("adult");
+
   useEffect(() => {
     const fetchTrain = async () => {
       try {
@@ -169,8 +174,17 @@ function Booking() {
     fetchPromotions();
   }, [id]);
 
-  const originalPrice = train ? Number(train.price) + extraPrice : 0;
-  const finalPrice = Math.max(originalPrice - discountAmount, 0);
+  const basePrice = train ? Number(train.price) + extraPrice : 0;
+  
+  let objectDiscountRate = 0;
+  if (passengerType === "child") objectDiscountRate = 0.25;
+  else if (passengerType === "student") objectDiscountRate = 0.10;
+  else if (passengerType === "senior") objectDiscountRate = 0.15;
+
+  const objectDiscount = Math.round(basePrice * objectDiscountRate);
+  const priceAfterObjectDiscount = basePrice - objectDiscount;
+
+  const finalPrice = Math.max(priceAfterObjectDiscount - discountAmount, 0);
 
   const handleSeatSelect = (cNumber, sNumber, addedPrice) => {
     setCoachNumber(cNumber);
@@ -198,7 +212,7 @@ function Booking() {
 
       const res = await API.post("/promotions/validate", {
         code: code,
-        orderValue: originalPrice,
+        orderValue: priceAfterObjectDiscount, // Gửi giá đã trừ đối tượng để tính voucher
       });
 
       setDiscountAmount(res.data.discountAmount || 0);
@@ -222,6 +236,11 @@ function Booking() {
       alert("Vui lòng chọn ghế trên sơ đồ");
       return;
     }
+    
+    if (!passengerName.trim() || !cccd.trim()) {
+      alert("Vui lòng nhập đầy đủ Họ tên và Số CCCD");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -233,6 +252,9 @@ function Booking() {
         promotionCode: appliedPromotion?.code || "",
         discountAmount: discountAmount,
         finalPrice: finalPrice,
+        passengerName,
+        cccd,
+        passengerType, // adult, student, child, senior
       };
 
       console.log("BOOKING PAYLOAD:", payload);
@@ -310,6 +332,50 @@ function Booking() {
                 {coachNumber && seatNumber 
                   ? `Toa số ${coachNumber} - Ghế số ${seatNumber}` 
                   : "Chưa chọn ghế (Vui lòng click vào sơ đồ)"}
+              </div>
+
+              <div className="passenger-info-section" style={{ background: "#f8f9fa", padding: "15px", borderRadius: "8px", border: "1px solid #ddd", marginBottom: "20px" }}>
+                <h4 style={{ margin: "0 0 15px 0", color: "#333", borderBottom: "1px solid #eee", paddingBottom: "10px" }}>👤 Thông tin Hành khách</h4>
+                
+                <label>Họ và tên</label>
+                <input
+                  type="text"
+                  value={passengerName}
+                  onChange={(e) => setPassengerName(e.target.value)}
+                  placeholder="Nhập họ và tên người đi (Ví dụ: Nguyễn Văn A)"
+                  required
+                />
+
+                <label>Số CCCD / GKS</label>
+                <input
+                  type="text"
+                  value={cccd}
+                  onChange={(e) => setCccd(e.target.value)}
+                  placeholder="Nhập số Căn cước / Hộ chiếu"
+                  required
+                />
+
+                <label>Đối tượng đi tàu</label>
+                <select 
+                  value={passengerType}
+                  onChange={(e) => {
+                    setPassengerType(e.target.value);
+                    setDiscountAmount(0); // reset promo khi đổi đối tượng
+                    setAppliedPromotion(null);
+                  }}
+                  style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "1px solid #ccc", marginBottom: "10px" }}
+                >
+                  <option value="adult">Người lớn (Giá gốc)</option>
+                  <option value="child">Trẻ em (Giảm 25%)</option>
+                  <option value="student">Sinh viên (Giảm 10%)</option>
+                  <option value="senior">Người cao tuổi (Giảm 15%)</option>
+                </select>
+                
+                {objectDiscount > 0 && (
+                  <div style={{ color: "#c9503a", fontSize: "14px", fontWeight: "bold", marginTop: "5px" }}>
+                    ⭐ Đối tượng này được giảm: -{objectDiscount.toLocaleString("vi-VN")}đ
+                  </div>
+                )}
               </div>
 
               <label>Mã khuyến mãi</label>

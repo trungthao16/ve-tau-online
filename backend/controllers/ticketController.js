@@ -119,12 +119,13 @@ exports.createTicket = async (req, res) => {
       seatNumber,
       coachNumber,
       promotionCode,
-      discountAmount = 0,
-      finalPrice,
+      passengerName,
+      cccd,
+      passengerType,
     } = req.body;
 
-    if (!trainId || !seatNumber || !coachNumber) {
-      return res.status(400).json({ message: "Thiếu thông tin: trainId, seatNumber hoặc coachNumber" });
+    if (!trainId || !seatNumber || !coachNumber || !passengerName || !cccd) {
+      return res.status(400).json({ message: "Thiếu thông tin bắt buộc" });
     }
 
     const train = await Train.findById(trainId);
@@ -153,9 +154,19 @@ exports.createTicket = async (req, res) => {
       }
     }
 
+    // Logic giảm giá theo đối tượng
+    let objectDiscountRate = 0;
+    const type = passengerType || "adult";
+    if (type === "child") objectDiscountRate = 0.25;      // Giẻ em: giảm 25%
+    else if (type === "student") objectDiscountRate = 0.10; // Sinh viên: giảm 10%
+    else if (type === "senior") objectDiscountRate = 0.15;  // Người già: giảm 15%
+
+    const objectDiscount = Math.round(basePrice * objectDiscountRate);
+    const priceAfterObjectDiscount = basePrice - objectDiscount;
+
     let validPromotionCode = null;
     let validDiscountAmount = 0;
-    let finalTicketPrice = basePrice;
+    let finalTicketPrice = priceAfterObjectDiscount;
 
     if (promotionCode) {
       const promotion = await Promotion.findOne({
@@ -174,14 +185,10 @@ exports.createTicket = async (req, res) => {
         let recalculatedDiscount = 0;
 
         if (promotion.discountType === "percent") {
-          recalculatedDiscount =
-            (Number(train.price) * promotion.discountValue) / 100;
+          recalculatedDiscount = Math.round((priceAfterObjectDiscount * promotion.discountValue) / 100);
 
           if (promotion.maxDiscount > 0) {
-            recalculatedDiscount = Math.min(
-              recalculatedDiscount,
-              promotion.maxDiscount
-            );
+            recalculatedDiscount = Math.min(recalculatedDiscount, promotion.maxDiscount);
           }
         } else if (promotion.discountType === "fixed") {
           recalculatedDiscount = promotion.discountValue;
@@ -189,7 +196,7 @@ exports.createTicket = async (req, res) => {
 
         validPromotionCode = promotion.code;
         validDiscountAmount = recalculatedDiscount;
-        finalTicketPrice = Math.max(Number(train.price) - recalculatedDiscount, 0);
+        finalTicketPrice = Math.max(priceAfterObjectDiscount - recalculatedDiscount, 0);
       }
     }
 
@@ -200,10 +207,14 @@ exports.createTicket = async (req, res) => {
       train: trainId,
       seatNumber: seatNumber.toString(),
       coachNumber: Number(coachNumber),
-      price: finalTicketPrice,
       originalPrice: basePrice,
-      promotionCode: validPromotionCode,
+      passengerName,
+      cccd,
+      passengerType: type,
+      objectDiscount,
       discountAmount: validDiscountAmount,
+      promotionCode: validPromotionCode,
+      price: finalTicketPrice,
       status: "booked",
       paymentStatus: "unpaid",
       paymentMethod: "vnpay",

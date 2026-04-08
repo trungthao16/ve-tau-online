@@ -84,6 +84,25 @@ const ticketSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    passengerName: {
+      type: String,
+      required: true,
+      default: "Khách hàng"
+    },
+    cccd: {
+      type: String,
+      required: true,
+      default: "000000000000"
+    },
+    passengerType: {
+      type: String,
+      enum: ["adult", "student", "child", "senior"],
+      default: "adult",
+    },
+    objectDiscount: {
+      type: Number,
+      default: 0,
+    },
     discountAmount: {
       type: Number,
       default: 0,
