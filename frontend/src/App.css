@@ -2117,6 +2117,59 @@ button{
 }
 
 /* =========================
+   ADMIN CHARTS SECTION
+========================= */
+.admin-charts-section {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+  margin-top: 28px;
+  margin-bottom: 40px;
+}
+
+.admin-chart-card {
+  background: #fff;
+  border: 1px solid #e8dfd0;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(44, 27, 18, 0.06);
+}
+
+.admin-chart-header {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #f0e8d9;
+  padding-bottom: 14px;
+}
+
+.admin-chart-header h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c1b12;
+}
+
+.chart-subtitle {
+  font-size: 12px;
+  color: #999;
+}
+
+.chart-empty {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-style: italic;
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .admin-charts-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
    ADMIN NAVBAR
 ========================= */
 .admin-navbar{
