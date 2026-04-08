@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import API from "../api/axios";
 import TicketQRCode from "../components/TicketQRCode";
+import CancelTicketModal from "../components/CancelTicketModal";
 import toast from "react-hot-toast";
 
 function MyTickets() {
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [ticketToCancel, setTicketToCancel] = useState(null);
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -59,51 +61,17 @@ function MyTickets() {
     }
   };
 
-  const handleCancel = async (ticketId, ticket) => {
-    // Chỉ tính phí nếu vé đã thanh toán
-    if (ticket.paymentStatus === "paid") {
-      const now = new Date();
-      const depDate = new Date(ticket.train?.departureDate);
-      const [hours, minutes] = (ticket.train?.departureTime || "00:00").split(":");
-      depDate.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0);
+  const handleCancelClick = (ticket) => {
+    setTicketToCancel(ticket);
+  };
 
-      const timeDiffMs = depDate - now;
-      const hoursDiff = timeDiffMs / (1000 * 60 * 60);
-
-      let refundPercent = 0;
-      let feePercent = 100;
-
-      if (hoursDiff > 24) {
-        refundPercent = 90;
-        feePercent = 10;
-      } else if (hoursDiff >= 4) {
-        refundPercent = 50;
-        feePercent = 50;
-      } else {
-        refundPercent = 0;
-        feePercent = 100;
-      }
-
-      const fee = Math.round(ticket.price * (feePercent / 100));
-      const refund = ticket.price - fee;
-
-      const confirmMsg = 
-        `Bạn có chắc chắn muốn hủy vé này?\n\n` +
-        `• Giá vé: ${ticket.price.toLocaleString("vi-VN")}đ\n` +
-        `• Phí hủy (${feePercent}%): ${fee.toLocaleString("vi-VN")}đ\n` +
-        `• Số tiền hoàn lại: ${refund.toLocaleString("vi-VN")}đ\n\n` +
-        (refundPercent === 0 
-          ? "⚠️ Lưu ý: Vé hủy dưới 4h không được hoàn tiền." 
-          : "Số tiền sẽ được hoàn lại theo phương thức thanh toán của bạn.");
-
-      if (!window.confirm(confirmMsg)) return;
-    } else {
-      if (!window.confirm("Bạn có chắc chắn muốn hủy vé này?")) return;
-    }
+  const confirmCancel = async () => {
+    if (!ticketToCancel) return;
 
     try {
-      const res = await API.put(`/tickets/${ticketId}/cancel`);
+      const res = await API.put(`/tickets/${ticketToCancel._id}/cancel`);
       toast.success(res.data.message || "Đã hủy vé thành công!");
+      setTicketToCancel(null);
       refreshTickets();
     } catch (error) {
       console.log("Lỗi hủy vé:", error);
@@ -274,7 +242,7 @@ function MyTickets() {
                 {ticket.status !== "cancelled" && (
                   <button
                     className="cancel-btn"
-                    onClick={() => handleCancel(ticket._id, ticket)}
+                    onClick={() => handleCancelClick(ticket)}
                   >
                     Hủy vé
                   </button>
@@ -291,6 +259,15 @@ function MyTickets() {
           ticket={selectedTicket} 
           onClose={() => setSelectedTicket(null)} 
           onPrint={handlePrint}
+        />
+      )}
+
+      {/* Tích hợp Modal Xác nhận hủy vé Đẹp */}
+      {ticketToCancel && (
+        <CancelTicketModal
+          ticket={ticketToCancel}
+          onClose={() => setTicketToCancel(null)}
+          onConfirm={confirmCancel}
         />
       )}
     </div>

@@ -3564,6 +3564,155 @@ body{
 /* =========================
    PRINT STYLES FOR TICKETS
 ========================= */
+/* =========================
+   CUSTOM CANCEL TICKET MODAL
+========================= */
+.cancel-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(15, 23, 42, 0.85); /* Deep slate with transparent */
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.cancel-modal-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 440px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  overflow: hidden;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.cancel-modal-header {
+  padding: 30px 24px 20px;
+  text-align: center;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.warning-icon {
+  font-size: 40px;
+  margin-bottom: 12px;
+}
+
+.cancel-modal-header h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #1e293b;
+  font-weight: 800;
+}
+
+.cancel-modal-body {
+  padding: 24px;
+}
+
+.modal-intro {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #475569;
+  margin-bottom: 24px;
+}
+
+.modal-intro strong {
+  color: #c9503a;
+}
+
+.refund-breakdown {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.breakdown-row.fee {
+  color: #ef4444; /* Dainty red */
+  font-weight: 500;
+}
+
+.breakdown-divider {
+  height: 1px;
+  background: #e2e8f0;
+  margin: 12px 0;
+}
+
+.breakdown-row.total-refund {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.modal-notice {
+  margin-top: 20px;
+  font-size: 13px;
+  font-style: italic;
+  text-align: center;
+}
+
+.error-text { color: #dc2626; }
+.success-text { color: #16a34a; }
+
+.cancel-modal-footer {
+  padding: 20px 24px 30px;
+  display: flex;
+  gap: 12px;
+}
+
+.btn-no {
+  flex: 1;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  border-radius: 12px;
+  color: #475569;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-no:hover {
+  background: #f1f5f9;
+}
+
+.btn-yes {
+  flex: 1.2;
+  padding: 14px;
+  border: none;
+  background: linear-gradient(135deg, #c9503a 0%, #a53d2c 100%);
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(201, 80, 58, 0.3);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-yes:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(201, 80, 58, 0.4);
+}
 @media print {
   /* Hide everything else */
   body * {
