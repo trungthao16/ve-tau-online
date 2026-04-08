@@ -175,7 +175,7 @@ function Booking() {
   }, [id]);
 
   const basePrice = train ? Number(train.price) + extraPrice : 0;
-  
+
   let objectDiscountRate = 0;
   if (passengerType === "child") objectDiscountRate = 0.25;
   else if (passengerType === "student") objectDiscountRate = 0.10;
@@ -236,7 +236,7 @@ function Booking() {
       alert("Vui lòng chọn ghế trên sơ đồ");
       return;
     }
-    
+
     if (!passengerName.trim() || !cccd.trim()) {
       alert("Vui lòng nhập đầy đủ Họ tên và Số CCCD");
       return;
@@ -318,25 +318,25 @@ function Booking() {
 
             <form onSubmit={handleBooking}>
               <label>Ghế đã chọn</label>
-              <div 
-                style={{ 
-                  padding: "12px", 
-                  background: "#eaf5ef", 
-                  border: "1px solid #4ca37d", 
-                  borderRadius: "8px", 
-                  fontWeight: "bold", 
+              <div
+                style={{
+                  padding: "12px",
+                  background: "#eaf5ef",
+                  border: "1px solid #4ca37d",
+                  borderRadius: "8px",
+                  fontWeight: "bold",
                   color: "#2a6948",
-                  marginBottom: "20px" 
+                  marginBottom: "20px"
                 }}
               >
-                {coachNumber && seatNumber 
-                  ? `Toa số ${coachNumber} - Ghế số ${seatNumber}` 
+                {coachNumber && seatNumber
+                  ? `Toa số ${coachNumber} - Ghế số ${seatNumber}`
                   : "Chưa chọn ghế (Vui lòng click vào sơ đồ)"}
               </div>
 
               <div className="passenger-info-section" style={{ background: "#f8f9fa", padding: "15px", borderRadius: "8px", border: "1px solid #ddd", marginBottom: "20px" }}>
                 <h4 style={{ margin: "0 0 15px 0", color: "#333", borderBottom: "1px solid #eee", paddingBottom: "10px" }}>👤 Thông tin Hành khách</h4>
-                
+
                 <label>Họ và tên</label>
                 <input
                   type="text"
@@ -346,7 +346,7 @@ function Booking() {
                   required
                 />
 
-                <label>Số CCCD / GKS</label>
+                <label>Số CCCD / Hộ chiếu</label>
                 <input
                   type="text"
                   value={cccd}
@@ -356,7 +356,7 @@ function Booking() {
                 />
 
                 <label>Đối tượng đi tàu</label>
-                <select 
+                <select
                   value={passengerType}
                   onChange={(e) => {
                     setPassengerType(e.target.value);
@@ -370,7 +370,7 @@ function Booking() {
                   <option value="student">Sinh viên (Giảm 10%)</option>
                   <option value="senior">Người cao tuổi (Giảm 15%)</option>
                 </select>
-                
+
                 {objectDiscount > 0 && (
                   <div style={{ color: "#c9503a", fontSize: "14px", fontWeight: "bold", marginTop: "5px" }}>
                     ⭐ Đối tượng này được giảm: -{objectDiscount.toLocaleString("vi-VN")}đ
@@ -398,18 +398,18 @@ function Booking() {
 
               {activePromotions.length > 0 && (
                 <div className="active-promotions-list">
-                  <p 
+                  <p
                     onClick={() => setShowPromos(!showPromos)}
                     style={{ cursor: "pointer", display: "inline-flex", alignItems: "center", gap: "6px" }}
                   >
-                    Xem mã có thể áp dụng 
+                    Xem mã có thể áp dụng
                     <span style={{ fontSize: '10px' }}>{showPromos ? '▲' : '▼'}</span>
                   </p>
-                  
+
                   {showPromos && (
-                    <div className="promo-chips" style={{ 
-                      display: 'flex', 
-                      flexDirection: 'column', 
+                    <div className="promo-chips" style={{
+                      display: 'flex',
+                      flexDirection: 'column',
                       flexWrap: 'nowrap',
                       gap: '10px',
                       maxHeight: '260px',
@@ -420,28 +420,28 @@ function Booking() {
                     }}>
                       {activePromotions.map((promo) => {
                         const isPercent = promo.discountType === 'percent';
-                        const valText = isPercent 
-                          ? `Giảm ${promo.discountValue}%` 
+                        const valText = isPercent
+                          ? `Giảm ${promo.discountValue}%`
                           : `Giảm ${(promo.discountValue / 1000).toLocaleString('vi-VN')}k`;
-                        const maxText = isPercent && promo.maxDiscount > 0 
-                          ? ` tối đa ${(promo.maxDiscount / 1000).toLocaleString('vi-VN')}k` 
+                        const maxText = isPercent && promo.maxDiscount > 0
+                          ? ` tối đa ${(promo.maxDiscount / 1000).toLocaleString('vi-VN')}k`
                           : '';
-                        const minText = promo.minOrderValue > 0 
-                          ? `Đơn tối thiểu ${(promo.minOrderValue / 1000).toLocaleString('vi-VN')}k` 
+                        const minText = promo.minOrderValue > 0
+                          ? `Đơn tối thiểu ${(promo.minOrderValue / 1000).toLocaleString('vi-VN')}k`
                           : 'Mọi đơn hàng';
-                          
+
                         const isApplied = appliedPromotion && appliedPromotion.code === promo.code;
-                          
+
                         return (
-                          <div 
-                            key={promo._id} 
+                          <div
+                            key={promo._id}
                             className="promo-chip-shopee"
                             onClick={() => {
-                               if (!isApplied) {
-                                 setPromoCode(promo.code);
-                                 handleApplyPromotion(promo.code);
-                                 setShowPromos(false);
-                               }
+                              if (!isApplied) {
+                                setPromoCode(promo.code);
+                                handleApplyPromotion(promo.code);
+                                setShowPromos(false);
+                              }
                             }}
                             style={{
                               display: 'flex',
@@ -468,13 +468,13 @@ function Booking() {
                               </div>
                               <div style={{ fontSize: '13px', color: '#6b6156' }}>{minText}</div>
                             </div>
-                            <div style={{ 
-                              background: isApplied ? '#e1f5e6' : '#ffece8', 
-                              color: isApplied ? '#28a745' : '#b64431', 
-                              padding: '6px 12px', 
-                              borderRadius: '8px', 
-                              fontSize: '12px', 
-                              fontWeight: '700' 
+                            <div style={{
+                              background: isApplied ? '#e1f5e6' : '#ffece8',
+                              color: isApplied ? '#28a745' : '#b64431',
+                              padding: '6px 12px',
+                              borderRadius: '8px',
+                              fontSize: '12px',
+                              fontWeight: '700'
                             }}>
                               {isApplied ? '✔ Đang dùng' : 'Dùng ngay'}
                             </div>
