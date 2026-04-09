@@ -5,7 +5,7 @@ const SeatLock = require("../models/SeatLock");
 // lấy danh sách tàu
 exports.getTrains = async (req, res) => {
   try {
-    const trains = await Train.find();
+    const trains = await Train.find().sort({ _id: -1 }).limit(100);
     res.json(trains);
   } catch (err) {
     res.status(500).json({ message: err.message });
