@@ -147,15 +147,19 @@ exports.vnpayReturn = async (req, res) => {
       .update(Buffer.from(signData, "utf-8"))
       .digest("hex");
 
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+
     if (secureHash !== signed) {
-      return res.status(400).send("Sai chữ ký bảo mật");
+      console.error("Sai chữ ký bảo mật VNPAY");
+      return res.redirect(`${frontendUrl}/mytickets?payment=failed&reason=invalid_signature`);
     }
 
     const { vnp_TxnRef, vnp_ResponseCode, vnp_TransactionNo } = req.query;
 
     const tickets = await Ticket.find({ vnpTxnRef: vnp_TxnRef });
     if (tickets.length === 0) {
-      return res.status(404).send("Không tìm thấy giao dịch vé");
+      console.error("Không tìm thấy giao dịch vé: ", vnp_TxnRef);
+      return res.redirect(`${frontendUrl}/mytickets?payment=failed&reason=not_found`);
     }
 
     if (vnp_ResponseCode === "00") {
